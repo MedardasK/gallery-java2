@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/gallery.iml" filepath="$PROJECT_DIR$/gallery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gallery-api/galleryapi.iml" filepath="$PROJECT_DIR$/gallery-api/galleryapi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gallery-bl/gallerybl.iml" filepath="$PROJECT_DIR$/gallery-bl/gallerybl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gallery-model/gallerymodel.iml" filepath="$PROJECT_DIR$/gallery-model/gallerymodel.iml" />
+    </modules>
+  </component>
+</project>
