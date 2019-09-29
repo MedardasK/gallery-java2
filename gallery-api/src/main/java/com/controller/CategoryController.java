@@ -1,9 +1,10 @@
 package com.controller;
 
-
 import com.entity.Category;
 import com.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,23 +21,24 @@ public class CategoryController {
         return categoryService.findAllCategories();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/create")
-    public Category saveCategory(@RequestParam String category) {
-        System.out.println("name");
-        String cat = "asd";
-        return categoryService.saveCategory(cat);
+    public ResponseEntity<Category> createCategory(@RequestBody String name) {
+        if (name != null && !name.equals("")) {
+            return ResponseEntity.ok(categoryService.saveCategory(name));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-//@PostMapping("/create")
-//    public Category saveCategory(@RequestBody Category category){
-//        System.out.println("test");
-//        return categoryService.saveCategory(category);
-//    }
-
-    //    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public void deleteCategory(@PathVariable("id") Long id){
-        categoryService.deleteCategory(id);
+    public ResponseEntity<String> deleteCategory(@PathVariable("id") Long id){
+        if (id > 0) {
+            return ResponseEntity.ok(categoryService.deleteCategory(id));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

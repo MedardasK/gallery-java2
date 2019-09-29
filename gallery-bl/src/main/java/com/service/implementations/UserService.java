@@ -1,7 +1,10 @@
 package com.service.implementations;
 
+
 import com.DAO.IUserRep;
+import com.entity.Role;
 import com.entity.User;
+import com.service.IRoleService;
 import com.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,6 +24,9 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Autowired
     private IUserRep userRepository;
+
+    @Autowired
+    private IRoleService roleService;
 
     @Autowired
     private BCryptPasswordEncoder bcryptEncoder;
@@ -48,13 +54,14 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     @Override
-    public void delete(Long id) {
-        userRepository.deleteById(id);
-    }
+    public String delete(Long id) {
+        try {
+            userRepository.deleteById(id);
+            return "Success";
+        } catch (Exception exception){
+            return "Failed";
+        }
 
-    @Override
-    public User findOne(String username) {
-        return userRepository.findByUsername(username);
     }
 
     @Override
@@ -64,9 +71,17 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public User save(User user) {
-        User newUser = new User();
-        newUser.setUsername(user.getUsername());
-        newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
-        return userRepository.save(newUser);
+
+        if (userRepository.findByUsername(user.getUsername().toLowerCase()) == null){
+            User newUser = new User();
+            newUser.setUsername(user.getUsername());
+            newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+            Set<Role> roles = new HashSet<>();
+            roles.add(roleService.findByRoleName("USER"));
+            newUser.setRoles(roles);
+            return userRepository.save(newUser);
+        } else {
+            return null;
+        }
     }
 }

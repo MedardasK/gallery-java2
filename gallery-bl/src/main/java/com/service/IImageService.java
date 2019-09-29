@@ -5,7 +5,6 @@ import com.payload.ImageUpdate;
 import com.payload.ImageUpload;
 
 import java.util.List;
-import java.util.Set;
 
 public interface IImageService {
 
@@ -15,9 +14,10 @@ public interface IImageService {
 
     List<Image> getAllImages();
 
-    void deleteImage(Long fileId);
+    String deleteImage(Long fileId);
 
-    List<Image> getAllImagesBySearch(String searchString, Set<Long> tagsIds, Set<Long> categoriesIds);
+    List<Image> getAllImagesBySearch(String searchString);
 
-    Image updateImage(ImageUpdate imageUpdate);
+    Image updateImage(Long id, ImageUpdate imageUpdate);
+
 }

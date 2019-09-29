@@ -1,12 +1,15 @@
 package com.entity;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "TAG")
 public class Tag {
@@ -17,13 +20,23 @@ public class Tag {
     @Column(name = "TAG_ID",unique=true, nullable = false)
     private Long id;
 
-    @Column(name = "NAME")
     private String name;
 
-    @ManyToMany(mappedBy = "tags")
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private Set<Image> files = new HashSet<>();
 
-    public Tag() {
+    @JsonBackReference
+    public Set<Image> getFiles() {
+        return files;
     }
 
 }

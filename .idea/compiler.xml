@@ -12,15 +12,15 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="gallery" target="1.8" />
       <module name="galleryapi" target="1.8" />
       <module name="gallerybl" target="1.8" />
+      <module name="galleryJava" target="1.8" />
       <module name="gallerymodel" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="gallery" options="-parameters" />
+      <module name="galleryJava" options="-parameters" />
       <module name="galleryapi" options="-parameters" />
       <module name="gallerybl" options="-parameters" />
       <module name="gallerymodel" options="-parameters" />

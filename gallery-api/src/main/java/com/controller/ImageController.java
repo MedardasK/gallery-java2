@@ -1,16 +1,15 @@
 package com.controller;
 
-
 import com.entity.Image;
 import com.payload.ImageUpdate;
 import com.payload.ImageUpload;
 import com.service.IImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("images")
@@ -25,32 +24,53 @@ public class ImageController {
     }
 
     @GetMapping("/image/{id}")
-    public Image getImageById(@PathVariable(value = "id") Long fileId) {
-        return imageService.getImage(fileId);
+    public ResponseEntity<Image> getImageById(@PathVariable(value = "id") Long id) {
+        if (id > 0) {
+            return ResponseEntity.ok(imageService.getImage(id));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/upload")
-    public Image uploadFile(@ModelAttribute ImageUpload imageUpload) {
-        return imageService.saveImage(imageUpload);
+    public ResponseEntity<Image> uploadFile(@ModelAttribute ImageUpload imageUpload) {
+        if (imageUpload.getFile() != null && imageUpload.getCategories() != null && imageUpload.getTags() != null
+        && imageUpload.getDescription() != null){
+            return ResponseEntity.ok(imageService.saveImage(imageUpload));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Image> updateImage(@PathVariable(value = "id") Long id,
+                                             @ModelAttribute ImageUpdate imageUpdate) {
+        if (id > 0 && imageUpdate.getCategories() != null && imageUpdate.getTags() != null
+                && imageUpdate.getDescription() != null && imageUpdate.getName() != null){
+            return ResponseEntity.ok(imageService.updateImage(id, imageUpdate));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteFile(@PathVariable(value = "id") Long Id) {
-        imageService.deleteImage(Id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteFile(@PathVariable(value = "id") Long id) {
+        if (id > 0) {
+            return ResponseEntity.ok(imageService.deleteImage(id));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PostMapping("/update/{imageUpdate}")
-    public Image updateImage(@ModelAttribute ImageUpdate imageUpdate) {
-        return imageService.updateImage(imageUpdate);
-    }
-
-    @GetMapping("/search/{searchString}{tagsIds}{categoriesIds}")
-    public List<Image> getAllImagesBySearch(@PathVariable(value = "searchString") String searchString,
-                                            @PathVariable(value = "tagsIds") Set<Long> tagsIds,
-                                            @PathVariable(value = "categoriesIds") Set<Long> categoriesIds) {
-        return imageService.getAllImagesBySearch(searchString, tagsIds, categoriesIds);
+    @GetMapping("/search/")
+    public ResponseEntity<List<Image>> getAllImagesBySearch(@RequestParam String searchParams) {
+        if (!searchParams.isEmpty()) {
+            return ResponseEntity.ok(imageService.getAllImagesBySearch(searchParams));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

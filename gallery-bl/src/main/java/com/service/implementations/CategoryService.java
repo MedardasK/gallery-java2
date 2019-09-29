@@ -1,6 +1,5 @@
 package com.service.implementations;
 
-
 import com.DAO.ICategoryRep;
 import com.entity.Category;
 import com.service.ICategoryService;
@@ -16,22 +15,26 @@ public class CategoryService implements ICategoryService {
     private ICategoryRep categoryRep;
 
     public List<Category> findAllCategories() {
-        return (List<Category>) categoryRep.findAll();
+        return categoryRep.findAll();
     }
 
     public Category saveCategory(String name) {
-        Category category = new Category();
-        category.setName(name);
-        return categoryRep.save(category);
+        if (categoryRep.findByName(name.toLowerCase()) == null){
+            Category category = new Category();
+            category.setName(name);
+            return categoryRep.save(category);
+        } else {
+            return null;
+        }
     }
-//    public Category saveCategory(Category category) {
-//        return categoryRep.save(category);
-//    }
 
-    public void deleteCategory(Long tagId) {
-        categoryRep.deleteById(tagId)
-               /* .orElseThrow(() -> new MyFileNotFoundException("Category not found with id " + categoryId) {
-                })*/
-        ;
+    public String deleteCategory(Long tagId) {
+        try {
+            categoryRep.deleteById(tagId);
+            return "Success";
+        } catch (Exception exception) {
+
+            return "Failed";
+        }
     }
 }

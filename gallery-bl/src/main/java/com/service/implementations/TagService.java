@@ -1,15 +1,14 @@
 package com.service.implementations;
 
 
-
 import com.DAO.ITagRep;
 import com.entity.Tag;
-import com.exceptions.MyFileNotFoundException;
 import com.service.ITagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TagService implements ITagService {
@@ -22,19 +21,32 @@ public class TagService implements ITagService {
     }
 
     public Tag getTagById(Long tagId) {
-        return tagRepository.findById(tagId)
-                .orElseThrow(() -> new MyFileNotFoundException("Tag not found with id " + tagId));
+        Optional<Tag> tagOptional = tagRepository.findById(tagId);
+        if (tagOptional.isPresent()) {
+            return tagOptional.get();
+        }
+        else {
+            return null;
+        }
     }
 
-    public void deleteTag(Long tagId) {
-        tagRepository.deleteById(tagId);
+    public String deleteTag(Long tagId) {
+        try {
+            tagRepository.deleteById(tagId);
+            return "Success";
+        } catch (Exception exception) {
+            return "Failed";
+        }
     }
 
     public Tag saveTag(String name) {
-        Tag tag = new Tag();
-        tag.setName(name);
-
-        return tagRepository.save(tag);
+        if (tagRepository.findByName(name.toLowerCase()) == null) {
+            Tag tag = new Tag();
+            tag.setName(name);
+            return tagRepository.save(tag);
+        } else {
+            return null;
+        }
     }
 
 }

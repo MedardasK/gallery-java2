@@ -1,11 +1,15 @@
 package com.entity;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
 
-@Data
+
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "ROLE")
 public class Role {
@@ -14,11 +18,24 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "ROLE_ID",unique=true, nullable = false)
-    private String id;
+    private Long id;
 
-    @Column
     private String name;
 
     @ManyToMany(mappedBy = "roles")
     private Collection<User> users;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @JsonBackReference
+    public Collection<User> getUsers() {
+        return users;
+    }
+
 }

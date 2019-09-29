@@ -1,10 +1,13 @@
 package com.entity;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Data
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "IMAGE_FULL")
 public class ImageFull {
@@ -13,8 +16,23 @@ public class ImageFull {
     @Column(name = "IMAGE_FULL_ID", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "DATA")
+
     @Lob
     private byte[] data;
 
+    @OneToOne(mappedBy = "imageFull")
+    private Image image;
+
+    public Long getId() {
+        return id;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    @JsonBackReference
+    public Image getImage() {
+        return image;
+    }
 }

@@ -1,45 +1,54 @@
 package com.controller;
 
-
 import com.entity.User;
 import com.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RestController
+@RestController("users")
 public class UserController {
 
     @Autowired
     private IUserService userService;
 
-    //@Secured({"ROLE_ADMIN", "ROLE_USER"})
+    @PostMapping("/register")
+    public ResponseEntity<User> create(@RequestBody User user){
+        if (user.getUsername() != null || user.getPassword() != null) {
+            return ResponseEntity.ok(userService.save(user));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value="/user", method = RequestMethod.GET)
+    @GetMapping()
     public List listUser(){
         return userService.findAll();
     }
 
-    //@Secured("ROLE_USER")
-    //@PreAuthorize("hasRole('USER')")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
-    public User getOne(@PathVariable(value = "id") Long id){
-        return userService.findById(id);
-    }
-
-    @PostMapping("/register")
-    public User create(@RequestBody User user){
-        return userService.save(user);
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getOne(@PathVariable(value = "id") Long id){
+        if (id > 0) {
+            return ResponseEntity.ok(userService.findById(id));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value="/user/{id}", method = RequestMethod.DELETE)
-    public void deleteUser(@PathVariable(value = "id") Long id){
-        userService.delete(id);
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable(value = "id") Long id){
+        if (id > 0) {
+            return ResponseEntity.ok(userService.delete(id));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

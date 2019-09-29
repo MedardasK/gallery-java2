@@ -9,7 +9,7 @@ public interface ICategoryService {
     List<Category> findAllCategories();
 
     Category saveCategory(String name);
-//    Category saveCategory(Category category);
 
-    void deleteCategory(Long id);
+    String deleteCategory(Long id);
+
 }
