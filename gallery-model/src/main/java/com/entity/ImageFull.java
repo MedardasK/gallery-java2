@@ -16,7 +16,6 @@ public class ImageFull {
     @Column(name = "IMAGE_FULL_ID", updatable = false, nullable = false)
     private Long id;
 
-
     @Lob
     private byte[] data;
 

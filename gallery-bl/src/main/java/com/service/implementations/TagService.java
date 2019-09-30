@@ -4,7 +4,6 @@ package com.service.implementations;
 import com.DAO.ITagRep;
 import com.entity.Tag;
 import com.service.ITagService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,8 +12,9 @@ import java.util.Optional;
 @Service
 public class TagService implements ITagService {
 
-    @Autowired
     private ITagRep tagRepository;
+
+    public TagService(ITagRep tagRepository){this.tagRepository = tagRepository;}
 
     public List<Tag> getAllTags() {
         return tagRepository.findAll();

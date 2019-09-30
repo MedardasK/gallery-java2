@@ -3,7 +3,6 @@ package com.service.implementations;
 import com.DAO.ICategoryRep;
 import com.entity.Category;
 import com.service.ICategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,11 @@ import java.util.List;
 @Service
 public class CategoryService implements ICategoryService {
 
-    @Autowired
     private ICategoryRep categoryRep;
+
+    public CategoryService(ICategoryRep categoryRep) {
+        this.categoryRep = categoryRep;
+    }
 
     public List<Category> findAllCategories() {
         return categoryRep.findAll();

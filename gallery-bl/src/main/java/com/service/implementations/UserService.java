@@ -6,7 +6,6 @@ import com.entity.Role;
 import com.entity.User;
 import com.service.IRoleService;
 import com.service.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,14 +21,17 @@ import java.util.Set;
 @Service(value = "userService")
 public class UserService implements UserDetailsService, IUserService {
 
-    @Autowired
     private IUserRep userRepository;
-
-    @Autowired
     private IRoleService roleService;
-
-    @Autowired
     private BCryptPasswordEncoder bcryptEncoder;
+
+    public UserService(IUserRep userRepository,
+                       IRoleService roleService,
+                       BCryptPasswordEncoder bcryptEncoder) {
+        this.userRepository = userRepository;
+        this.roleService = roleService;
+        this.bcryptEncoder = bcryptEncoder;
+    }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);

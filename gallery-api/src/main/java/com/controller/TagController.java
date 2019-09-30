@@ -2,7 +2,6 @@ package com.controller;
 
 import com.entity.Tag;
 import com.service.ITagService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +12,11 @@ import java.util.List;
 @RequestMapping("tags")
 public class TagController {
 
-    @Autowired
     private ITagService tagService;
+
+    public TagController(ITagService tagService) {
+        this.tagService = tagService;
+    }
 
     @GetMapping()
     public List<Tag> getAllTags() {

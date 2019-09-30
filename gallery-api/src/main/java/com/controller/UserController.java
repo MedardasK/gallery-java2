@@ -2,7 +2,6 @@ package com.controller;
 
 import com.entity.User;
 import com.service.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +12,11 @@ import java.util.List;
 @RestController("users")
 public class UserController {
 
-    @Autowired
     private IUserService userService;
+
+    public UserController(IUserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<User> create(@RequestBody User user){

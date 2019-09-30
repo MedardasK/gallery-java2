@@ -13,7 +13,6 @@ import com.payload.ImageUpload;
 import com.payload.ResizedImage;
 import com.service.IImageService;
 import com.util.ImageResizeUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,14 +25,20 @@ import java.util.stream.Collectors;
 @Service
 public class ImageService implements IImageService {
 
-    @Autowired
     private EntityManager em;
-    @Autowired
     private IImageRep imageRep;
-    @Autowired
     private ITagRep tagRep;
-    @Autowired
     private ICategoryRep categoryRep;
+
+    public ImageService(EntityManager em,
+                        IImageRep imageRep,
+                        ITagRep tagRep,
+                        ICategoryRep categoryRep) {
+        this.em = em;
+        this.imageRep = imageRep;
+        this.tagRep = tagRep;
+        this.categoryRep = categoryRep;
+    }
 
     public Image saveImage(ImageUpload imageUpload) {
         MultipartFile file = imageUpload.getFile();

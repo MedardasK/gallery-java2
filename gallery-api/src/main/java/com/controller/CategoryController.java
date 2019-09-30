@@ -2,7 +2,6 @@ package com.controller;
 
 import com.entity.Category;
 import com.service.ICategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +12,11 @@ import java.util.List;
 @RequestMapping("categories")
 public class CategoryController {
 
-    @Autowired
     public ICategoryService categoryService;
+
+    public CategoryController(ICategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @GetMapping()
     public List<Category> categoryList(){

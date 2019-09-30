@@ -4,7 +4,6 @@ import com.entity.Image;
 import com.payload.ImageUpdate;
 import com.payload.ImageUpload;
 import com.service.IImageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,11 @@ import java.util.List;
 @RequestMapping("images")
 public class ImageController {
 
-    @Autowired
     private IImageService imageService;
+
+    public ImageController(IImageService imageService) {
+        this.imageService = imageService;
+    }
 
     @GetMapping()
     public List<Image> getAllImages() {

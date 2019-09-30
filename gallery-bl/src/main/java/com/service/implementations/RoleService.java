@@ -3,14 +3,14 @@ package com.service.implementations;
 import com.DAO.IRoleRep;
 import com.entity.Role;
 import com.service.IRoleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RoleService implements IRoleService {
 
-    @Autowired
     private IRoleRep roleRep;
+
+    public RoleService(IRoleRep roleRep){this.roleRep = roleRep;}
 
     public Role findByRoleName(String name) {
         Role role = roleRep.findByName(name);

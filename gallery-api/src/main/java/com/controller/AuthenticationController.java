@@ -4,7 +4,6 @@ package com.controller;
 import com.entity.User;
 import com.payload.AuthCookie;
 import com.service.IAuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
@@ -14,8 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class AuthenticationController {
 
-    @Autowired
     private IAuthenticationService authenticationService;
+
+    public AuthenticationController(IAuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User loginUser) throws AuthenticationException {
