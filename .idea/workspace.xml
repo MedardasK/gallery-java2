@@ -2,36 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="09ac5a7a-e651-4555-b43d-97f4f1d097b9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/src/main/java/com/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/src/main/java/com/config/WebSecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/src/main/java/com/controller/AuthenticationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/src/main/java/com/controller/AuthenticationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/src/main/java/com/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/src/main/java/com/controller/CategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/src/main/java/com/controller/ImageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/src/main/java/com/controller/ImageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/src/main/java/com/controller/TagController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/src/main/java/com/controller/TagController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/src/main/java/com/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/src/main/java/com/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/target/classes/com/config/JwtAuthenticationFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/target/classes/com/config/JwtAuthenticationFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/target/classes/com/config/WebSecurityConfig.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/target/classes/com/controller/AuthenticationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/target/classes/com/controller/AuthenticationController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/target/classes/com/controller/CategoryController.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/target/classes/com/controller/CategoryController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/target/classes/com/controller/ImageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/target/classes/com/controller/ImageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/target/classes/com/controller/TagController.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/target/classes/com/controller/TagController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-api/target/classes/com/controller/UserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-api/target/classes/com/controller/UserController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/AuthenticationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/AuthenticationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/CategoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/CategoryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/ImageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/ImageService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/RoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/RoleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/TagService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/TagService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/src/main/java/com/service/implementations/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/AuthenticationService.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/AuthenticationService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/CategoryService.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/CategoryService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/ImageService.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/ImageService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/RoleService.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/RoleService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/TagService.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/TagService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-bl/target/classes/com/service/implementations/UserService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-model/src/main/java/com/entity/ImageFull.java" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-model/src/main/java/com/entity/ImageFull.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gallery-model/target/classes/com/entity/ImageFull.class" beforeDir="false" afterPath="$PROJECT_DIR$/gallery-model/target/classes/com/entity/ImageFull.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -51,6 +22,7 @@
   </component>
   <component name="ProjectId" id="1RWywXPFLdYYxOGlje765WBK1JB" />
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RequestMappingsPanelOrder0" value="0" />
     <property name="RequestMappingsPanelOrder1" value="1" />
     <property name="RequestMappingsPanelWidth0" value="75" />
@@ -108,7 +80,7 @@
       <updated>1569797385268</updated>
       <workItem from="1569797387893" duration="2129000" />
       <workItem from="1569800021629" duration="721000" />
-      <workItem from="1569827259555" duration="2453000" />
+      <workItem from="1569827259555" duration="3411000" />
     </task>
     <servers />
   </component>
