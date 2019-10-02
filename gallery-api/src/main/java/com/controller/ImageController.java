@@ -5,7 +5,7 @@ import com.payload.ImageUpdate;
 import com.payload.ImageUpload;
 import com.payload.SearchCriteria;
 import com.service.IImageService;
-import com.service.scpecification.IImageSpecification;
+import com.service.IImageSpecification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -72,9 +72,9 @@ public class ImageController {
     }
 
     @GetMapping("/search/")
-    public ResponseEntity<List<Image>> getAllImagesBySearch(@RequestParam String searchString,
-                                                            @RequestParam String categoriesIds,
-                                                            @RequestParam String tagsNames) {
+    public ResponseEntity<List<Image>> getAllImagesBySearch(@RequestParam String categoriesIds,
+                                                            @RequestParam String tagsNames,
+                                                            @RequestParam String searchString) {
         if (!searchString.isEmpty() || !categoriesIds.isEmpty() || !tagsNames.isEmpty()) {
             SearchCriteria searchCriteria = new SearchCriteria();
             searchCriteria.setCategoriesIds(categoriesIds);

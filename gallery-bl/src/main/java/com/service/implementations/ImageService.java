@@ -3,42 +3,29 @@ package com.service.implementations;
 import com.DAO.ICategoryRep;
 import com.DAO.IImageRep;
 import com.DAO.ITagRep;
-import com.entity.Category;
 import com.entity.Image;
 import com.entity.ImageFull;
-import com.entity.Tag;
 import com.exceptions.NotFoundException;
 import com.payload.ImageUpdate;
 import com.payload.ImageUpload;
 import com.payload.ResizedImage;
-import com.payload.SearchCriteria;
 import com.service.IImageService;
-import com.service.scpecification.IImageSpecification;
 import com.util.ImageResizeUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
 public class ImageService implements IImageService {
 
-    private EntityManager em;
     private IImageRep imageRep;
     private ITagRep tagRep;
     private ICategoryRep categoryRep;
 
-    public ImageService(EntityManager em,
-                        IImageRep imageRep,
-                        ITagRep tagRep,
-                        ICategoryRep categoryRep) {
-        this.em = em;
+    public ImageService(IImageRep imageRep, ITagRep tagRep, ICategoryRep categoryRep) {
         this.imageRep = imageRep;
         this.tagRep = tagRep;
         this.categoryRep = categoryRep;
@@ -50,7 +37,7 @@ public class ImageService implements IImageService {
         Image image = new Image();
 
         try {
-            if(imageName.contains("..")) {
+            if (imageName.contains("..")) {
                 throw new NotFoundException("Filename contains invalid path sequence " + imageName);
             }
             String imageString = imageName.substring(0, imageName.lastIndexOf("."));
@@ -76,13 +63,12 @@ public class ImageService implements IImageService {
     }
 
     public Image getImage(Long imageId) {
-            Optional<Image> imageOptional = imageRep.findById(imageId);
-            if(imageOptional.isPresent()){
-                return imageOptional.get();
-            }
-            else{
-                return null;
-            }
+        Optional<Image> imageOptional = imageRep.findById(imageId);
+        if (imageOptional.isPresent()) {
+            return imageOptional.get();
+        } else {
+            return null;
+        }
     }
 
     public List<Image> getAllImages() {
@@ -94,107 +80,30 @@ public class ImageService implements IImageService {
         try {
             imageRep.deleteById(imageId);
             return "\"Success\"";
-        }
-        catch (Exception err) {
+        } catch (Exception err) {
             return err.toString();
         }
     }
 
-    public Image updateImage(Long id, ImageUpdate imageUpdate ) {
+    public Image updateImage(Long id, ImageUpdate imageUpdate) {
         Optional<Image> optionalImage = imageRep.findById(id);
         Image image;
 
-        if (optionalImage != null){
+        if (optionalImage != null) {
             image = optionalImage.get();
             image.setCategories(categoryRep.findByIdIn(extractIds(imageUpdate.getCategories())));
             image.setTags(tagRep.findByIdIn(extractIds(imageUpdate.getTags())));
             image.setName(imageUpdate.getName());
             image.setDescription(imageUpdate.getDescription());
             image.setDate(imageUpdate.getDate());
-            return  imageRep.save(image);
+            return imageRep.save(image);
         } else {
             return null;
         }
     }
 
-    public List<Image> getAllImagesBySearch(String searchString, String categoriesIds, String tagsNames) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Image> cq = cb.createQuery(Image.class);
-        Root<Image> root = cq.from(Image.class);
-        Join<Image, Tag> tags = root.join("tags", JoinType.LEFT);
-        Join<Image, Category> categories = root.join("categories", JoinType.LEFT);
-        cq.select(root);
-
-        List<Long> categoriesIdsList = extractIds(categoriesIds);
-        List<String> tagsArray = new ArrayList<>();
-
-        if (!tagsNames.isEmpty()) {
-            tagsArray = Arrays.asList(tagsNames.split(","));
-        }
-
-        Predicate predicate = null;
-        Predicate searchPredicate = null;
-        Predicate tagsSearchPredicate = null;
-        Predicate categoriesSearchPredicate = null;
-
-        if (!searchString.isEmpty()) {
-            Predicate namePredicate = cb.like(root.get("name"), "%" + searchString + "%");
-            Predicate descriptionPredicate = cb.like(root.get("description"), "%" + searchString + "%");
-            searchPredicate = cb.or(namePredicate, descriptionPredicate);
-        }
-        if (tagsArray.size() > 0) {
-            tagsSearchPredicate = cb.equal(tags.get("name"), tagsArray.get(0));
-            if (tagsArray.size() > 1) {
-                for (int i = 1; i < tagsArray.size(); i++) {
-                    Predicate currentPredicate = cb.equal(tags.get("name"), tagsArray.get(i));
-                    tagsSearchPredicate = cb.or(tagsSearchPredicate, currentPredicate);
-                }
-            }
-        }
-        if (categoriesIdsList.size() > 0) {
-            categoriesSearchPredicate = cb.equal(categories.get("id"), categoriesIdsList.get(0));
-            if (categoriesIdsList.size() > 1) {
-                for (int i = 1; i < categoriesIdsList.size(); i++) {
-                    Predicate currentPredicate = cb.equal(categories.get("id"), categoriesIdsList.get(i));
-                    categoriesSearchPredicate = cb.or(categoriesSearchPredicate, currentPredicate);
-                }
-            }
-        }
-
-        if (searchPredicate != null) {
-            predicate = searchPredicate;
-        }
-
-        if (tagsSearchPredicate != null) {
-            if (predicate != null) {
-                predicate = cb.and(predicate, tagsSearchPredicate);
-            } else {
-                predicate = tagsSearchPredicate;
-            }
-        }
-
-        if (categoriesSearchPredicate != null) {
-            if (predicate != null) {
-                predicate = cb.and(predicate, categoriesSearchPredicate);
-            } else {
-                predicate = categoriesSearchPredicate;
-            }
-        }
-
-        if (predicate != null) {
-
-            cq.where(predicate);
-            List<Image> filteredImages = new ArrayList<>(
-                    new HashSet<>(em.createQuery(cq).getResultList()));
-            return filteredImages;
-        } else {
-            return imageRep.findAll();
-        }
-
-    }
-
-    private List<Long> extractIds(String value){
-        if (value.isEmpty() || value.replace("{", "").replace("}", "").isEmpty()){
+    private List<Long> extractIds(String value) {
+        if (value.isEmpty() || value.replace("{", "").replace("}", "").isEmpty()) {
             return Collections.emptyList();
         } else {
             return Arrays.stream(value.replace("{", "").replace("}", "")

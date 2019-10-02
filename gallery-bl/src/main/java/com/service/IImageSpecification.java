@@ -1,4 +1,4 @@
-package com.service.scpecification;
+package com.service;
 
 
 import com.entity.Image;

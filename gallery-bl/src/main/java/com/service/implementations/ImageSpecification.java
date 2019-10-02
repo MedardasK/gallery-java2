@@ -1,4 +1,4 @@
-package com.service.scpecification;
+package com.service.implementations;
 
 
 import com.DAO.IImageSearchRep;
@@ -6,13 +6,12 @@ import com.entity.Category;
 import com.entity.Image;
 import com.entity.Tag;
 import com.payload.SearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.service.IImageSpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,8 +19,11 @@ import java.util.stream.Collectors;
 @Service
 public class ImageSpecification implements IImageSpecification {
 
-    @Autowired
     private IImageSearchRep searchRep;
+
+    public ImageSpecification(IImageSearchRep searchRep) {
+        this.searchRep = searchRep;
+    }
 
     @Transactional
     public List<Image> searchImages(SearchCriteria searchCriteria) {
@@ -32,33 +34,56 @@ public class ImageSpecification implements IImageSpecification {
     private static class ImageSearchSpecification {
         private static Specification<Image> findByCriteria(SearchCriteria searchCriteria) {
             return (Specification<Image>) (root, query, cb) -> {
-                List<Predicate> predicates = new ArrayList<>();
                 List<String> tagsArray;
                 query.distinct(true);
+
+                Predicate categoriesSearchPredicate = null;
+                Predicate predicates = null;
                 Predicate searchPredicate = null;
+                Predicate tagsSearchPredicate = null;
 
                 if (!searchCriteria.getCategoriesIds().isEmpty()) {
                     List<Long> categoriesIdsList = Arrays.stream(searchCriteria.getCategoriesIds().split(","))
                             .map(Long::valueOf).collect(Collectors.toList());
                     Join<Image, Category> categories = root.join("categories", JoinType.LEFT);
-                    predicates.add(categories.in(categoriesIdsList));
+                    categoriesSearchPredicate = categories.in(categoriesIdsList);
                 }
 
                 if (!searchCriteria.getTagsNames().isEmpty()) {
                     tagsArray = Arrays.asList(searchCriteria.getTagsNames().split(","));
                     Join<Image, Tag> tags = root.join("tags", JoinType.LEFT);
-                    predicates.add(cb.equal(tags.get("name"), tagsArray.get(0)));
+                    tagsSearchPredicate = cb.equal(tags.get("name"), tagsArray.get(0));
                     for (int i = 1; i < tagsArray.size(); i++) {
-                        predicates.add(cb.equal(tags.get("name"), tagsArray.get(i)));
+                        Predicate currentPredicate = cb.equal(tags.get("name"), tagsArray.get(i));
+                        tagsSearchPredicate = cb.or(tagsSearchPredicate, currentPredicate);
                     }
                 }
 
                 if (!searchCriteria.getSearchString().isEmpty()) {
-                    predicates.add(cb.like(root.get("description"), "%" + searchCriteria.getSearchString() + "%"));
-                    predicates.add(cb.like(root.get("name"), "%" + searchCriteria.getSearchString() + "%"));
+                    searchPredicate = cb.or(cb.like(root.get("description"), "%" + searchCriteria.getSearchString() + "%"),
+                            cb.like(root.get("name"), "%" + searchCriteria.getSearchString() + "%"));
                 }
 
-                return cb.or(predicates.toArray(new Predicate[predicates.size()]));
+                if (categoriesSearchPredicate != null) {
+                    predicates = categoriesSearchPredicate;
+                }
+
+                if (tagsSearchPredicate != null) {
+                    if (predicates != null) {
+                        predicates = cb.and(predicates, tagsSearchPredicate);
+                    } else {
+                        predicates = tagsSearchPredicate;
+                    }
+                }
+
+                if (searchPredicate != null) {
+                    if (predicates != null) {
+                        predicates = cb.and(predicates, searchPredicate);
+                    } else {
+                        predicates = searchPredicate;
+                    }
+                }
+                return predicates;
             };
         }
     }
