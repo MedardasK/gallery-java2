@@ -3,7 +3,9 @@ package com.controller;
 import com.entity.Image;
 import com.payload.ImageUpdate;
 import com.payload.ImageUpload;
+import com.payload.SearchCriteria;
 import com.service.IImageService;
+import com.service.scpecification.IImageSpecification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,11 @@ import java.util.List;
 public class ImageController {
 
     private IImageService imageService;
+    private IImageSpecification imageSpecification;
 
-    public ImageController(IImageService imageService) {
+    public ImageController(IImageService imageService, IImageSpecification imageSpecification) {
         this.imageService = imageService;
+        this.imageSpecification = imageSpecification;
     }
 
     @GetMapping()
@@ -68,11 +72,18 @@ public class ImageController {
     }
 
     @GetMapping("/search/")
-    public ResponseEntity<List<Image>> getAllImagesBySearch(@RequestParam String searchParams) {
-        if (!searchParams.isEmpty()) {
-            return ResponseEntity.ok(imageService.getAllImagesBySearch(searchParams));
+    public ResponseEntity<List<Image>> getAllImagesBySearch(@RequestParam String searchString,
+                                                            @RequestParam String categoriesIds,
+                                                            @RequestParam String tagsNames) {
+        if (!searchString.isEmpty() || !categoriesIds.isEmpty() || !tagsNames.isEmpty()) {
+            SearchCriteria searchCriteria = new SearchCriteria();
+            searchCriteria.setCategoriesIds(categoriesIds);
+            searchCriteria.setTagsNames(tagsNames);
+            searchCriteria.setSearchString(searchString);
+            return ResponseEntity.ok(imageSpecification.searchImages(searchCriteria));
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(imageService.getAllImages());
         }
     }
+
 }

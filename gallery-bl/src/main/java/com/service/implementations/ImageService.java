@@ -11,7 +11,9 @@ import com.exceptions.NotFoundException;
 import com.payload.ImageUpdate;
 import com.payload.ImageUpload;
 import com.payload.ResizedImage;
+import com.payload.SearchCriteria;
 import com.service.IImageService;
+import com.service.scpecification.IImageSpecification;
 import com.util.ImageResizeUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -20,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,22 +117,7 @@ public class ImageService implements IImageService {
         }
     }
 
-    public List<Image> customFindByNameDes(String search) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Image> cq = cb.createQuery(Image.class);
-        Root<Image> root = cq.from(Image.class);
-        cq.select(root);
-        List<Predicate> predicates = new ArrayList<>();
-        if(search!=null) {
-            predicates.add(cb.or(
-                    cb.like(root.get("name"), "%" + search + "%"),
-                    cb.like(root.get("description"), "%" + search + "%"))
-            );
-        }
-        return (List<Image>) cb.and(predicates.toArray(new Predicate[predicates.size()]));
-    }
-
-    public List<Image> getAllImagesBySearch(String searchParams) {
+    public List<Image> getAllImagesBySearch(String searchString, String categoriesIds, String tagsNames) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Image> cq = cb.createQuery(Image.class);
         Root<Image> root = cq.from(Image.class);
@@ -136,15 +125,12 @@ public class ImageService implements IImageService {
         Join<Image, Category> categories = root.join("categories", JoinType.LEFT);
         cq.select(root);
 
-        List<Long> categoriesIds = extractIds(searchParams.substring(13, searchParams.indexOf("tagsNames:") + 1));
-        String tagsString = searchParams.substring(
-                searchParams.indexOf("tagsNames:") + 10, searchParams.indexOf("searchString:"));
+        List<Long> categoriesIdsList = extractIds(categoriesIds);
         List<String> tagsArray = new ArrayList<>();
 
-        if (!tagsString.isEmpty()) {
-            tagsArray = Arrays.asList(tagsString.split(","));
+        if (!tagsNames.isEmpty()) {
+            tagsArray = Arrays.asList(tagsNames.split(","));
         }
-        String searchString = searchParams.substring(searchParams.indexOf("searchString:") + 13);
 
         Predicate predicate = null;
         Predicate searchPredicate = null;
@@ -165,11 +151,11 @@ public class ImageService implements IImageService {
                 }
             }
         }
-        if (categoriesIds.size() > 0) {
-            categoriesSearchPredicate = cb.equal(categories.get("id"), categoriesIds.get(0));
-            if (categoriesIds.size() > 1) {
-                for (int i = 1; i < categoriesIds.size(); i++) {
-                    Predicate currentPredicate = cb.equal(categories.get("id"), categoriesIds.get(i));
+        if (categoriesIdsList.size() > 0) {
+            categoriesSearchPredicate = cb.equal(categories.get("id"), categoriesIdsList.get(0));
+            if (categoriesIdsList.size() > 1) {
+                for (int i = 1; i < categoriesIdsList.size(); i++) {
+                    Predicate currentPredicate = cb.equal(categories.get("id"), categoriesIdsList.get(i));
                     categoriesSearchPredicate = cb.or(categoriesSearchPredicate, currentPredicate);
                 }
             }
@@ -208,11 +194,11 @@ public class ImageService implements IImageService {
     }
 
     private List<Long> extractIds(String value){
-        if (value == null || value.isEmpty() || value.substring(1, value.length() - 1).isEmpty()){
+        if (value.isEmpty() || value.replace("{", "").replace("}", "").isEmpty()){
             return Collections.emptyList();
         } else {
-            return Arrays.stream(value.substring(1, value.length() - 1).split(","))
-                    .map(Long::valueOf).collect(Collectors.toList());
+            return Arrays.stream(value.replace("{", "").replace("}", "")
+                    .split(",")).map(Long::valueOf).collect(Collectors.toList());
         }
     }
 
