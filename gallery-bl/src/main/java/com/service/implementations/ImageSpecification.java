@@ -6,6 +6,7 @@ import com.entity.Category;
 import com.entity.Image;
 import com.entity.Tag;
 import com.payload.SearchCriteria;
+import com.payload.ThumbnailDetails;
 import com.service.IImageSpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,14 @@ public class ImageSpecification implements IImageSpecification {
     }
 
     @Transactional
-    public List<Image> searchImages(SearchCriteria searchCriteria) {
+    public List<ThumbnailDetails> searchImages(SearchCriteria searchCriteria) {
         List<Image> imagesList = searchRep.findAll(ImageSearchSpecification.findByCriteria(searchCriteria));
-        return imagesList;
+
+        List<ThumbnailDetails> thumbnailDetails = imagesList.stream()
+                .map(image -> new ThumbnailDetails(image.getId(), image.getData(),
+                        image.getName(), image.getDescription(), image.getDate(),
+                        image.getCategories(), image.getTags())).collect(Collectors.toList());
+        return thumbnailDetails;
     }
 
     private static class ImageSearchSpecification {

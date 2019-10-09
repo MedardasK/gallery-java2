@@ -9,12 +9,15 @@ import com.exceptions.NotFoundException;
 import com.payload.ImageUpdate;
 import com.payload.ImageUpload;
 import com.payload.ResizedImage;
+import com.payload.ThumbnailDetails;
 import com.service.IImageService;
 import com.util.ImageResizeUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,7 +65,19 @@ public class ImageService implements IImageService {
         }
     }
 
-    public Image getImage(Long imageId) {
+    public byte[] getImage(Long imageId) {
+        Optional<Image> imageOptional = imageRep.findById(imageId);
+        if (imageOptional.isPresent()) {
+
+            byte[] byteImage = imageOptional.get().getImageFull().getData();
+
+            return byteImage;
+        } else {
+            return null;
+        }
+    }
+
+    public Image getImageDetails(Long imageId) {
         Optional<Image> imageOptional = imageRep.findById(imageId);
         if (imageOptional.isPresent()) {
             return imageOptional.get();
@@ -71,8 +86,15 @@ public class ImageService implements IImageService {
         }
     }
 
-    public List<Image> getAllImages() {
-        return imageRep.findAll();
+    public List<ThumbnailDetails> getAllImages() {
+        List<Image> imageList = imageRep.findAll();
+
+        List<ThumbnailDetails> thumbnailDetails = imageList.stream()
+                .map(image -> new ThumbnailDetails(image.getId(), image.getData(),
+                        image.getName(), image.getDescription(), image.getDate(),
+                        image.getCategories(), image.getTags())).collect(Collectors.toList());
+
+        return thumbnailDetails;
     }
 
     public String deleteImage(Long imageId) {
@@ -103,10 +125,10 @@ public class ImageService implements IImageService {
     }
 
     private List<Long> extractIds(String value) {
-        if (value.isEmpty() || value.replace("{", "").replace("}", "").isEmpty()) {
+        if (value.isEmpty() || value.replace("[", "").replace("]", "").isEmpty()) {
             return Collections.emptyList();
         } else {
-            return Arrays.stream(value.replace("{", "").replace("}", "")
+            return Arrays.stream(value.replace("[", "").replace("]", "")
                     .split(",")).map(Long::valueOf).collect(Collectors.toList());
         }
     }

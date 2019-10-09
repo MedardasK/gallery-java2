@@ -4,8 +4,10 @@ import com.entity.Image;
 import com.payload.ImageUpdate;
 import com.payload.ImageUpload;
 import com.payload.SearchCriteria;
+import com.payload.ThumbnailDetails;
 import com.service.IImageService;
 import com.service.IImageSpecification;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +27,21 @@ public class ImageController {
     }
 
     @GetMapping()
-    public List<Image> getAllImages() {
+    public List<ThumbnailDetails> getAllImages() {
         return imageService.getAllImages();
     }
 
-    @GetMapping("/image/{id}")
-    public ResponseEntity<Image> getImageById(@PathVariable(value = "id") Long id) {
+    @GetMapping("/imageDetails/{id}")
+    public ResponseEntity<Image> getImageDetailsById(@PathVariable(value = "id") Long id) {
+        if (id > 0) {
+            return ResponseEntity.ok(imageService.getImageDetails(id));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public @ResponseBody ResponseEntity<byte[]> getImageById(@PathVariable(value = "id") Long id) {
         if (id > 0) {
             return ResponseEntity.ok(imageService.getImage(id));
         } else {
@@ -72,7 +83,7 @@ public class ImageController {
     }
 
     @GetMapping("/search/")
-    public ResponseEntity<List<Image>> getAllImagesBySearch(@RequestParam String categoriesIds,
+    public ResponseEntity<List<ThumbnailDetails>> getAllImagesBySearch(@RequestParam String categoriesIds,
                                                             @RequestParam String tagsNames,
                                                             @RequestParam String searchString) {
         if (!searchString.isEmpty() || !categoriesIds.isEmpty() || !tagsNames.isEmpty()) {
@@ -82,7 +93,8 @@ public class ImageController {
             searchCriteria.setSearchString(searchString);
             return ResponseEntity.ok(imageSpecification.searchImages(searchCriteria));
         } else {
-            return ResponseEntity.ok(imageService.getAllImages());
+            return null;
+//            return ResponseEntity.ok(imageService.getAllImages());
         }
     }
 
