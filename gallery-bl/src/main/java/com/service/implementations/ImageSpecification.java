@@ -5,7 +5,6 @@ import com.DAO.IImageSearchRep;
 import com.entity.Category;
 import com.entity.Image;
 import com.entity.Tag;
-import com.payload.SearchCriteria;
 import com.payload.ThumbnailDetails;
 import com.service.IImageSpecification;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,8 +26,8 @@ public class ImageSpecification implements IImageSpecification {
     }
 
     @Transactional
-    public List<ThumbnailDetails> searchImages(SearchCriteria searchCriteria) {
-        List<Image> imagesList = searchRep.findAll(ImageSearchSpecification.findByCriteria(searchCriteria));
+    public List<ThumbnailDetails> searchImages(String categoriesIds, String tagsNames, String searchString) {
+        List<Image> imagesList = searchRep.findAll(ImageSearchSpecification.findByCriteria(categoriesIds, tagsNames, searchString));
 
         List<ThumbnailDetails> thumbnailDetails = imagesList.stream()
                 .map(image -> new ThumbnailDetails(image.getId(), image.getData(),
@@ -38,7 +37,7 @@ public class ImageSpecification implements IImageSpecification {
     }
 
     private static class ImageSearchSpecification {
-        private static Specification<Image> findByCriteria(SearchCriteria searchCriteria) {
+        private static Specification<Image> findByCriteria(String categoriesIds, String tagsNames, String searchString) {
             return (Specification<Image>) (root, query, cb) -> {
                 List<String> tagsArray;
                 query.distinct(true);
@@ -48,15 +47,15 @@ public class ImageSpecification implements IImageSpecification {
                 Predicate searchPredicate = null;
                 Predicate tagsSearchPredicate = null;
 
-                if (!searchCriteria.getCategoriesIds().isEmpty()) {
-                    List<Long> categoriesIdsList = Arrays.stream(searchCriteria.getCategoriesIds().split(","))
+                if (!categoriesIds.isEmpty()) {
+                    List<Long> categoriesIdsList = Arrays.stream(categoriesIds.split(","))
                             .map(Long::valueOf).collect(Collectors.toList());
                     Join<Image, Category> categories = root.join("categories", JoinType.LEFT);
                     categoriesSearchPredicate = categories.in(categoriesIdsList);
                 }
 
-                if (!searchCriteria.getTagsNames().isEmpty()) {
-                    tagsArray = Arrays.asList(searchCriteria.getTagsNames().split(","));
+                if (!tagsNames.isEmpty()) {
+                    tagsArray = Arrays.asList(tagsNames.split(","));
                     Join<Image, Tag> tags = root.join("tags", JoinType.LEFT);
                     tagsSearchPredicate = cb.equal(tags.get("name"), tagsArray.get(0));
                     for (int i = 1; i < tagsArray.size(); i++) {
@@ -65,9 +64,9 @@ public class ImageSpecification implements IImageSpecification {
                     }
                 }
 
-                if (!searchCriteria.getSearchString().isEmpty()) {
-                    searchPredicate = cb.or(cb.like(root.get("description"), "%" + searchCriteria.getSearchString() + "%"),
-                            cb.like(root.get("name"), "%" + searchCriteria.getSearchString() + "%"));
+                if (!searchString.isEmpty()) {
+                    searchPredicate = cb.or(cb.like(root.get("description"), "%" + searchString + "%"),
+                            cb.like(root.get("name"), "%" + searchString + "%"));
                 }
 
                 if (categoriesSearchPredicate != null) {

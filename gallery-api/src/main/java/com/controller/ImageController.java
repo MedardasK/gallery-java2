@@ -3,7 +3,6 @@ package com.controller;
 import com.entity.Image;
 import com.payload.ImageUpdate;
 import com.payload.ImageUpload;
-import com.payload.SearchCriteria;
 import com.payload.ThumbnailDetails;
 import com.service.IImageService;
 import com.service.IImageSpecification;
@@ -87,11 +86,7 @@ public class ImageController {
                                                             @RequestParam String tagsNames,
                                                             @RequestParam String searchString) {
         if (!searchString.isEmpty() || !categoriesIds.isEmpty() || !tagsNames.isEmpty()) {
-            SearchCriteria searchCriteria = new SearchCriteria();
-            searchCriteria.setCategoriesIds(categoriesIds);
-            searchCriteria.setTagsNames(tagsNames);
-            searchCriteria.setSearchString(searchString);
-            return ResponseEntity.ok(imageSpecification.searchImages(searchCriteria));
+            return ResponseEntity.ok(imageSpecification.searchImages(categoriesIds, tagsNames, searchString));
         } else {
             return null;
 //            return ResponseEntity.ok(imageService.getAllImages());
