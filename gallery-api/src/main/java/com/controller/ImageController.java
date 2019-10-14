@@ -89,7 +89,6 @@ public class ImageController {
             return ResponseEntity.ok(imageSpecification.searchImages(categoriesIds, tagsNames, searchString));
         } else {
             return null;
-//            return ResponseEntity.ok(imageService.getAllImages());
         }
     }
 
